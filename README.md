@@ -21,11 +21,11 @@ void fragment() {
 
 **The problem**
 
-While creating my [Godot tiles benchmark](https://github.com/AndreVallestero/godot-static-tiles-benchmark), I wondered about the feasibility of a shader-based tile renderer. This concept is far from new, and it's often considered as the ideal way to render a large amount of tiles. The reason why no one uses it in Godot is because of Godot's shader system. The traditional way to create a tile map shader is to pass an array of tile IDs for the shader to render, however, Godot [currently lacks this functionality](https://github.com/godotengine/godot-proposals/issues/931). This means that we can't specify which tile IDs to render so it has to be hardcoded in the shader.
+While creating my [Godot tiles benchmark](https://github.com/AndreVallestero/godot-static-tiles-benchmark), I wondered about the feasibility of a shader-based tile renderer. This concept is far from new, and it's often considered one of the best ways (greedy mesh is better) to render a large amount of tiles. The reason why no one uses it in Godot is because of Godot's shader system. The traditional way to create a tile map shader is to pass an array of tile IDs for the shader to render, however, Godot [currently lacks this functionality](https://github.com/godotengine/godot-proposals/issues/931). This means that we can't specify which tile IDs to render so it has to be hardcoded in the shader.
 
 **How did you solve it?**
 
-I tackled this problem by storing the tile set and the tile map in the same texture and using a shader texture read to get the index and draw the appropriate tile. Additionally, by attaching an `ImageTexture` to a `Sprite` node, we are able to dynamically change the source texture, effectively mimicking the behavior of a dynamic tile map.
+I tackled this problem by storing the tile set and the tile map in the same texture and using a shader texture read to get the index and draw the appropriate tile. Additionally, by attaching an `ImageTexture` to a `Sprite` node, we are able to [dynamically change the source texture](https://godotengine.org/qa/53368/modifying-a-texture-at-run-time), effectively mimicking the behavior of a dynamic tile map.
 
 **What does this mean for me?**
 
