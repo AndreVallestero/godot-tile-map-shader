@@ -1,0 +1,57 @@
+[gd_scene load_steps=4 format=2]
+
+[sub_resource type="Shader" id=1]
+code = "shader_type canvas_item;
+
+void fragment() {
+	//    The tile used is stored in the Red value
+	//    Since there are 4 source tiles, we normalize it to 0., 1., 2., and 3.
+	//float tileIdx = floor(texture(TEXTURE, UV).r * 4.);
+	//    To get the tile offset, we must move it to the right by
+	//    idx * tile_width / texture_width
+	//float tileOffsetX = tileIdx * 16. / 80.;
+	//    tilemap_rows / texture_height
+	//float tileOffsetY = 45. / 61.;
+	//    Map and normalize the x to the tile x,
+	//    (UV.x * texture_width) % 1 * tile_width / texture_width
+	//float normX = mod(UV.x * 80., 1) * 16. / 80.;
+	//    Map and normalize the y to the tile y,
+	//    (UV.y * texture_height) % 1 * tile_height / texture_height
+	//float normY = mod(UV.y * 61., 1) * 16. / 61.;
+	//vec2 coord = vec2(tileOffsetX + normX, tileOffsetY + normY);
+	//COLOR = texture(TEXTURE, coord);
+	
+	vec2 txr_size = vec2(80, 61);
+	COLOR = texture(TEXTURE,
+		(mod(UV * txr_size, 1) * 16. // offset
+		+ vec2(floor(texture(TEXTURE, UV).r * 4.) * 16., 45.)) // map
+		/ txr_size // normalize
+	);
+}"
+
+[sub_resource type="ShaderMaterial" id=2]
+shader = SubResource( 1 )
+
+[sub_resource type="GDScript" id=3]
+script/source = "extends Sprite
+
+var pos = Vector2()
+
+func _ready():
+	var image = load(\"res://80x45tilemaptexture.png\")
+	texture = ImageTexture.new()
+	texture.create_from_image(image.get_data(), 2) #, 0)
+
+	# https://godotengine.org/qa/53368/modifying-a-texture-at-run-time
+	# If it's the first time, or if you want to upload the whole image
+	# _texture.create_from_image(_image, Texture.FLAGS_FILTER | Texture.FLAGS_REPEAT)
+	# If the texture already has data,
+	# you can upload pixels partially by providing the sub-rectangle you edited
+	# VisualServer.texture_set_data_partial(_texture.get_rid(), _image, min_x, min_y, size_x, size_y, dst_x, dst_y, 0, 0)
+"
+
+[node name="main" type="Sprite"]
+material = SubResource( 2 )
+scale = Vector2( 16, 16 )
+centered = false
+script = SubResource( 3 )
